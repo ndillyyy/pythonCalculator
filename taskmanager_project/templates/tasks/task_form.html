@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Task{% endblock %}
+{% block content %}
+<div class="card" style="max-width:540px;margin:auto">
+  <h2 style="margin-bottom:1rem">{{ action }} Task</h2>
+  <form method="post">{% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      <label>{{ field.label }}</label>{{ field }}
+      {% if field.errors %}<p style="color:#dc2626;font-size:.8rem">{{ field.errors.0 }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">{{ action }}</button>
+    <a href="/tasks/" class="btn btn-secondary" style="margin-left:.5rem">Cancel</a>
+  </form>
+</div>
+{% endblock %}

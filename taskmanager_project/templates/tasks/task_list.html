@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Tasks{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+  <h2>My Tasks</h2>
+  <div class="filters">
+    <a href="?filter=all" {% if filter_by == "all" %}style="font-weight:700"{% endif %}>All</a>
+    <a href="?filter=pending" {% if filter_by == "pending" %}style="font-weight:700"{% endif %}>Pending</a>
+    <a href="?filter=done" {% if filter_by == "done" %}style="font-weight:700"{% endif %}>Done</a>
+  </div>
+</div>
+{% if tasks %}
+<div class="card" style="padding:0">
+<table>
+  <thead><tr><th>Title</th><th>Priority</th><th>Due</th><th>Actions</th></tr></thead>
+  <tbody>
+  {% for task in tasks %}
+  <tr class="{% if task.done %}done-row{% endif %}">
+    <td>{{ task.title }}<br><small style="color:#6b7280">{{ task.description|truncatechars:60 }}</small></td>
+    <td><span class="badge badge-{{ task.priority }}">{{ task.get_priority_display }}</span></td>
+    <td>{{ task.due_date|default:"—" }}</td>
+    <td style="white-space:nowrap">
+      <form method="post" action="/tasks/{{ task.pk }}/toggle/" style="display:inline">{% csrf_token %}
+        <button class="btn btn-sm {% if task.done %}btn-secondary{% else %}btn-success{% endif %}" type="submit">
+          {% if task.done %}Undo{% else %}Done{% endif %}
+        </button>
+      </form>
+      <a href="/tasks/{{ task.pk }}/edit/" class="btn btn-sm btn-primary">Edit</a>
+      <a href="/tasks/{{ task.pk }}/delete/" class="btn btn-sm btn-danger">Del</a>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="card"><p>No tasks yet. <a href="/tasks/new/">Create one →</a></p></div>
+{% endif %}
+{% endblock %}
